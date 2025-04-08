@@ -53,7 +53,7 @@ semiring with commutative multiplication and idempotent addition -/
 class NonAnnihilatingIdemCommSemiring (R : Type*) extends
     NonAnnihilatingCommSemiring R, NonAnnihilatingIdemSemiring R
 
-namespace Semiring
+namespace WithBot
 
 instance annihilator_zero : Zero (WithBot R) where
   zero := none
@@ -161,4 +161,4 @@ instance annihilator_idemCommSemiring [NonAnnihilatingIdemCommSemiring R] :
     IdemCommSemiring (WithBot R) :=
   { annihilator_commSemiring, annihilator_idemSemiring with }
 
-end Semiring
+end WithBot
