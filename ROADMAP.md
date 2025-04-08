@@ -11,16 +11,15 @@ END
 ## Algebra
 
 ### Non-Annihilating Semirings
-* Define `NonAnnihilatingSemiring` extending `AddCommMagma` and `MulMonoid` with distributivity
+* Define `NonAnnihilatingSemiring` as a semiring with no annihilator
 * Define `NonAnnihilatingCommSemiring` with commutativity
-* Define `NonAnnihilatingIdemSemiring` and `NonAnnihilatingIdemCommSemiring` extending  `SemilatticeSup`
-* Implement `WithMulAnnihilator` and instances showing that it generates `Semiring`, `CommSemiring`, `IdemSemiring`, and `IdemCommSemiring`
-* Prove that the annihilator is an `OrderTop` for idempotent semirings
+* Define `NonAnnihilatingIdemSemiring` and `NonAnnihilatingIdemCommSemiring` where addition is supremum
+* Prove that these generate `Semiring`, `CommSemiring`, `IdemSemiring`, and `IdemCommSemiring` when given an annihilator
 
 ### Instances
-* Implement `BalancedProd` and instances for non-annihilating semirings and semirings
-* Implement `DominatingProd` and instances for non-annihilating semirings and semirings
-* Prove closure of linear order under `DominatingProd`
+* Implement a `NonAnnihilatingIdemCommSemiring` for harmony of natural numbers
+* Implement `BalancedProd` preserving partial order and `NonAnnihilatingCommSemiring`
+* Implement `DominatingProd` preserving linear order and `NonAnnihilatingIdemCommSemiring`
 
 ## Automata
 
