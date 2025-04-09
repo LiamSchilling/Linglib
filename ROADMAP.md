@@ -5,6 +5,11 @@ STAGE \d+( SECTION \w+(
 END
 ```
 
+### Branch Format
+```
+STAGE-\d+(-SECTION-\w+(-\w+)*)?
+```
+
 # STAGE 1: THEORY
 
 ## Algebra
