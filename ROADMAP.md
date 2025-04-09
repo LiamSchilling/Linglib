@@ -1,7 +1,6 @@
 ### Commit Format
 ```
-STAGE \d+(
-SECTION \w+(
+STAGE \d+( SECTION \w+(
 (OUTLINE|DEFINE|IMPLEMENT|PROVE) \w+)*)?
 END
 ```
