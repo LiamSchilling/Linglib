@@ -165,7 +165,7 @@ instance idemSemiring
 /-- An idempotent and commutative semiring for `Antitropical R`
 given a supremum semilattice with a minimum and an ordered and commutative add monoid for `R` -/
 instance idemCommSemiring
-    [SemilatticeSup R] [AddCommMonoid R] [OrderBot R] [AddLeftMono R] [AddRightMono R] :
+    [SemilatticeSup R] [OrderBot R] [AddCommMonoid R] [AddLeftMono R] [AddRightMono R] :
     IdemCommSemiring (Antitropical R) :=
   { idemSemiring, commMagma with }
 
