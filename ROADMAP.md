@@ -20,8 +20,11 @@ STAGE-\d+(-SECTION-\w+(-\w+)*)?
 * Define `NonAnnihilatingIdemSemiring` and `NonAnnihilatingIdemCommSemiring` where addition is supremum
 * Prove that these generate `Semiring`, `CommSemiring`, `IdemSemiring`, and `IdemCommSemiring` when given an annihilator
 
+### Tropical Semirings
+* Define `Antitropical` which induces a max-tropical semiring on a type
+* Prove that these generate `NonAnnihilatingIdemSemiring`, `NonAnnihilatingIdemCommSemiring`, `IdemSemiring`, and `IdemCommSemiring` toggling additive commutativity and presence of a minimum
+
 ### Instances
-* Implement a `NonAnnihilatingIdemCommSemiring` for harmony of natural numbers
 * Implement `BalancedProd` preserving partial order and `NonAnnihilatingCommSemiring`
 * Implement `DominatingProd` preserving linear order and `NonAnnihilatingIdemCommSemiring`
 

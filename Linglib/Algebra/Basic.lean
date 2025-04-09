@@ -1,1 +1,1 @@
-import Linglib.Algebra.NonAnnihilatingSemiring
+import Linglib.Algebra.Antitropical
