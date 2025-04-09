@@ -36,7 +36,7 @@ class NonAnnihilatingNonAssocSemiring (R : Type*) extends
 /-- A not-necessarily-annihilating
 semiring -/
 class NonAnnihilatingSemiring (R : Type*) extends
-    NonAnnihilatingNonUnitalSemiring R, NonAnnihilatingNonAssocSemiring R
+    NonAnnihilatingNonUnitalSemiring R, NonAnnihilatingNonAssocSemiring R, Monoid R
 
 /-- A not-necessarily-annihilating
 semiring with commutative multiplication -/
@@ -59,22 +59,37 @@ class NonAnnihilatingIdemCommSemiring (R : Type*) extends
 def WithAnnihilator (R : Type*) := WithBot R
 
 /-- The canonical map from `R` into `WithAnnihilator R` -/
-@[coe, match_pattern] def nonz : R → WithAnnihilator R := WithBot.some
+@[match_pattern] def nonz : R → WithAnnihilator R :=
+  WithBot.some
 
 namespace WithAnnihilator
 
-lemma some_eq_nonz (a : R) : some a = nonz a := rfl
+instance coe : Coe R (WithAnnihilator R) :=
+  ⟨nonz⟩
 
-@[simp] lemma coe_eq_nonz (a : R) : (a : WithBot R) = nonz a := rfl
+theorem some_eq_nonz (a : R) : some a = nonz a := rfl
 
-@[simp] lemma nonz_eq_nonz (a b : R) : nonz a = nonz b ↔ a = b := Option.some_inj
+theorem coe_eq_nonz (a : R) : (a : WithBot R) = nonz a := rfl
 
-instance coe : Coe R (WithAnnihilator R) := ⟨nonz⟩
+theorem nonz_inj (a b : R) : nonz a = nonz b ↔ a = b := Option.some_inj
 
-instance bot : Bot (WithAnnihilator R) := WithBot.bot
+instance le [LE R] : LE (WithAnnihilator R) :=
+  WithBot.le
+
+instance bot : Bot (WithAnnihilator R) :=
+  WithBot.bot
+
+instance orderBot [LE R] : OrderBot (WithAnnihilator R) :=
+  WithBot.orderBot
+
+instance semilatticeInf [SemilatticeInf R] : SemilatticeInf (WithAnnihilator R) :=
+  WithBot.semilatticeInf
+
+instance semilatticeSup [SemilatticeSup R] : SemilatticeSup (WithAnnihilator R) :=
+  WithBot.semilatticeSup
 
 instance zero : Zero (WithAnnihilator R) where
-  zero := ⊥
+  zero := none
 
 instance one [One R] : One (WithAnnihilator R) where
   one := nonz 1
@@ -85,13 +100,25 @@ instance add [Add R] : Add (WithAnnihilator R) where
 instance mul [Mul R] : Mul (WithAnnihilator R) where
   mul A B := Option.casesOn' A 0 (fun a => Option.map (a * .) B)
 
-lemma none_eq_zero : none = (0 : WithAnnihilator R) := rfl
+/-- Recursor for `WithAnnihilator` using the preferred forms `0` and `nonz a` -/
+@[elab_as_elim, induction_eliminator, cases_eliminator]
+def recZeroNonz {C : WithAnnihilator R → Sort*} (z : C 0) (n : ∀ a, C (nonz a)) : ∀ A, C A
+| 0 => z
+| (a : R) => n a
 
-lemma some_eq_one [One R] : some 1 = (1 : WithAnnihilator R) := rfl
+@[simp] theorem zero_le [LE R] (A : WithAnnihilator R) : 0 ≤ A := orderBot.bot_le A
 
-@[simp] lemma add_nonz [Add R] (a b : R) : nonz a + nonz b = nonz (a + b) := rfl
+theorem none_eq_zero : none = (0 : WithAnnihilator R) := rfl
 
-@[simp] lemma mul_nonz [Mul R] (a b : R) : nonz a * nonz b = nonz (a * b) := rfl
+theorem bot_eq_zero : ⊥ = (0 : WithAnnihilator R) := rfl
+
+theorem nonz_eq_one [One R] : nonz 1 = (1 : WithAnnihilator R) := rfl
+
+theorem nonz_add [Add R] (a b : R) : nonz (a + b) = nonz a + nonz b := rfl
+
+theorem nonz_mul [Mul R] (a b : R) : nonz (a * b) = nonz a * nonz b := rfl
+
+theorem nonz_sup [SemilatticeSup R] (a b : R) : nonz (a ⊔ b) = nonz a ⊔ nonz b := rfl
 
 instance addZeroClass [Add R] : AddZeroClass (WithAnnihilator R) where
   zero_add := by intro A; rfl
@@ -100,53 +127,48 @@ instance addZeroClass [Add R] : AddZeroClass (WithAnnihilator R) where
 instance addSemigroup [AddSemigroup R] : AddSemigroup (WithAnnihilator R) where
   add_assoc := by
     intro A B C
-    cases A; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    cases B; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    cases C; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    simp; apply add_assoc
+    cases A <;> cases B <;> cases C <;> simp[←nonz_add, nonz_inj, add_assoc]
 
 instance addCommMagma [AddCommMagma R] : AddCommMagma (WithAnnihilator R) where
   add_comm := by
     intro A B
-    cases A; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    cases B; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    simp; apply add_comm
+    cases A <;> cases B <;> simp[←nonz_add, nonz_inj, add_comm]
 
 instance mulZeroClass [Mul R] : MulZeroClass (WithAnnihilator R) where
   zero_mul := by intro A; rfl
   mul_zero := by intro A; cases A <;> rfl
 
 instance mulOneClass [MulOneClass R] : MulOneClass (WithAnnihilator R) where
-  one_mul := by intro A; rw[←some_eq_one, some_eq_nonz]; cases A; rfl; rw[some_eq_nonz]; simp
-  mul_one := by intro A; rw[←some_eq_one, some_eq_nonz]; cases A; rfl; rw[some_eq_nonz]; simp
+  one_mul := by intro A; cases A <;> simp[←nonz_eq_one, ←nonz_mul]
+  mul_one := by intro A; cases A <;> simp[←nonz_eq_one, ←nonz_mul]
 
 instance semigroup [Semigroup R] : Semigroup (WithAnnihilator R) where
   mul_assoc := by
     intro A B C
-    cases A; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    cases B; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    cases C; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    simp; apply mul_assoc
+    cases A <;> cases B <;> cases C <;> simp[←nonz_mul, nonz_inj, mul_assoc]
 
 instance commMagma [CommMagma R] : CommMagma (WithAnnihilator R) where
   mul_comm := by
     intro A B
-    cases A; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    cases B; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    simp; apply mul_comm
+    cases A <;> cases B <;> simp[←nonz_mul, nonz_inj, mul_comm]
 
 instance addMonoid [AddSemigroup R] : AddMonoid (WithAnnihilator R) :=
   { addSemigroup, addZeroClass with
   nsmul n A := match n with | 0 => 0 | n' + 1 => Option.map (fun a => Nat.repeat (. + a) n' a) A
-  nsmul_succ := by intro n A; cases n <;> cases A <;> rfl }
+  nsmul_succ := by
+    intro n A
+    cases n <;> cases A <;> rfl }
 
 instance addCommSemigroup [AddCommSemigroup R] : AddCommSemigroup (WithAnnihilator R) :=
   { addSemigroup, addCommMagma with }
 
 instance monoid [Monoid R] : Monoid (WithAnnihilator R) :=
   { semigroup, mulOneClass with
-  npow n A := match n with | 0 => 1 | n' + 1 => Option.map (fun a => Nat.repeat (. * a) n' a) A
-  npow_succ := by intro n A; cases n <;> (cases A; rfl; simp; rfl) }
+  npow n A := match n with | 0 => 1 | _ + 1 => Option.map (fun a => a ^ n) A
+  npow_succ := by
+    intro n A
+    cases n <;> cases A
+    <;> simp[Option.map, none_eq_zero, some_eq_nonz, ←nonz_mul, nonz_inj, pow_succ] }
 
 instance commSemigroup [CommSemigroup R] : CommSemigroup (WithAnnihilator R) :=
   { semigroup, commMagma with }
@@ -160,16 +182,10 @@ instance commMonoid [CommMonoid R] : CommMonoid (WithAnnihilator R) :=
 instance distrib [Distrib R] : Distrib (WithAnnihilator R) where
   left_distrib := by
     intro A B C
-    cases A; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    cases B; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    cases C; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    simp; apply left_distrib
+    cases A <;> cases B <;> cases C <;> simp[←nonz_add, ←nonz_mul, nonz_inj, left_distrib]
   right_distrib := by
     intro A B C
-    cases A; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    cases B; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    cases C; rw[none_eq_zero]; simp; rw[some_eq_nonz]
-    simp; apply right_distrib
+    cases A <;> cases B <;> cases C <;> simp[←nonz_add, ←nonz_mul, nonz_inj, right_distrib]
 
 /-- A non-unital, non-associative semiring for `WithAnnihilator R`
 given a non-annihilating, non-unital, non-associative semiring for `R`-/
@@ -205,14 +221,10 @@ instance commSemiring [NonAnnihilatingCommSemiring R] :
 given a non-annihilating idempotent semiring for `R`-/
 instance idemSemiring [self : NonAnnihilatingIdemSemiring R] :
     IdemSemiring (WithAnnihilator R) :=
-  { semiring, WithBot.semilatticeSup, WithBot.orderBot with
+  { semiring, semilatticeSup, orderBot with
   add_eq_sup := by
     intro A B
-    cases A; rw[none_eq_zero]; simp; apply WithBot.orderBot.bot_le
-    nth_rw 1 [some_eq_nonz]; rw[WithBot.some_eq_coe]
-    cases B; rw[none_eq_zero]; simp; apply WithBot.orderBot.bot_le
-    nth_rw 1 [some_eq_nonz]; rw[WithBot.some_eq_coe]
-    rw[←WithBot.coe_sup]; simp; apply self.add_eq_sup }
+    cases A <;> cases B <;> simp[←nonz_add, ←nonz_sup, nonz_inj, self.add_eq_sup] }
 
 /-- An commutative and idempotent semiring for `WithAnnihilator R`
 given a non-annihilating commutative and idempotent semiring for `R`-/
