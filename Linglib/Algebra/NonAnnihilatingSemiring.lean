@@ -76,17 +76,35 @@ theorem nonz_inj (a b : R) : nonz a = nonz b ↔ a = b := Option.some_inj
 instance le [LE R] : LE (WithAnnihilator R) :=
   WithBot.le
 
+instance lt [LT R] : LT (WithAnnihilator R) :=
+  WithBot.lt
+
 instance bot : Bot (WithAnnihilator R) :=
   WithBot.bot
 
 instance orderBot [LE R] : OrderBot (WithAnnihilator R) :=
   WithBot.orderBot
 
+instance orderTop [LE R] [OrderTop R] : OrderTop (WithAnnihilator R) :=
+  WithBot.orderTop
+
+instance preorder [Preorder R] : Preorder (WithAnnihilator R) :=
+  WithBot.preorder
+
+instance partialOrder [PartialOrder R] : PartialOrder (WithAnnihilator R) :=
+  WithBot.partialOrder
+
+instance linearOrder [LinearOrder R] : LinearOrder (WithAnnihilator R) :=
+  WithBot.linearOrder
+
 instance semilatticeInf [SemilatticeInf R] : SemilatticeInf (WithAnnihilator R) :=
   WithBot.semilatticeInf
 
 instance semilatticeSup [SemilatticeSup R] : SemilatticeSup (WithAnnihilator R) :=
   WithBot.semilatticeSup
+
+instance lattice [Lattice R] : Lattice (WithAnnihilator R) :=
+  WithBot.lattice
 
 instance zero : Zero (WithAnnihilator R) where
   zero := ⊥
@@ -117,6 +135,8 @@ theorem nonz_eq_one [One R] : nonz 1 = (1 : WithAnnihilator R) := rfl
 theorem nonz_add [Add R] (a b : R) : nonz (a + b) = nonz a + nonz b := rfl
 
 theorem nonz_mul [Mul R] (a b : R) : nonz (a * b) = nonz a * nonz b := rfl
+
+theorem nonz_inf [SemilatticeInf R] (a b : R) : nonz (a ⊓ b) = nonz a ⊓ nonz b := rfl
 
 theorem nonz_sup [SemilatticeSup R] (a b : R) : nonz (a ⊔ b) = nonz a ⊔ nonz b := rfl
 
