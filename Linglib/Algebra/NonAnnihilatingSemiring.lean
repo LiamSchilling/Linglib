@@ -89,7 +89,7 @@ instance semilatticeSup [SemilatticeSup R] : SemilatticeSup (WithAnnihilator R) 
   WithBot.semilatticeSup
 
 instance zero : Zero (WithAnnihilator R) where
-  zero := none
+  zero := ⊥
 
 instance one [One R] : One (WithAnnihilator R) where
   one := nonz 1
@@ -164,7 +164,7 @@ instance addCommSemigroup [AddCommSemigroup R] : AddCommSemigroup (WithAnnihilat
 
 instance monoid [Monoid R] : Monoid (WithAnnihilator R) :=
   { semigroup, mulOneClass with
-  npow n A := match n with | 0 => 1 | _ + 1 => Option.map (fun a => a ^ n) A
+  npow n A := match n with | 0 => 1 | _ + 1 => Option.map (. ^ n) A
   npow_succ := by
     intro n A
     cases n <;> cases A
