@@ -136,32 +136,37 @@ instance monoid [AddMonoid R] : Monoid (Antitropical R) :=
   { semigroup, mulOneClass with
   npow := npowRecAuto }
 
-instance distrib [SemilatticeSup R] [Add R] [AddLeftMono R] [AddRightMono R] : Distrib (Antitropical R) where
+instance distrib [SemilatticeSup R] [Add R] [AddLeftMono R] [AddRightMono R] :
+    Distrib (Antitropical R) where
   left_distrib := sorry
   right_distrib := sorry
 
 /-- A non-annihilating idempotent semiring for `Antitropical R`
 given a supremum semilattice and an ordered add monoid for `R` -/
-instance nonAnnihilatingIdemSemiring [SemilatticeSup R] [AddMonoid R] [AddLeftMono R] [AddRightMono R] :
+instance nonAnnihilatingIdemSemiring
+    [SemilatticeSup R] [AddMonoid R] [AddLeftMono R] [AddRightMono R] :
     NonAnnihilatingIdemSemiring (Antitropical R) :=
   { addSemigroup, addCommMagma, distrib, monoid, semilatticeSup with }
 
 /-- A non-annihilating idempotent and commutative semiring for `Antitropical R`
 given a supremum semilattice and an ordered and commutative add monoid for `R` -/
-instance nonAnnihilatingIdemCommSemiring [SemilatticeSup R] [OrderedAddCommMonoid R] :
-    NonAnnihilatingIdemCommSemiring (Antitropical R) := sorry
---  { nonAnnihilatingIdemSemiring, commMagma with }
+instance nonAnnihilatingIdemCommSemiring
+    [SemilatticeSup R] [AddCommMonoid R] [AddLeftMono R] [AddRightMono R] :
+    NonAnnihilatingIdemCommSemiring (Antitropical R) :=
+  { nonAnnihilatingIdemSemiring, commMagma with }
 
 /-- An idempotent semiring for `Antitropical R`
 given a supremum semilattice with a minimum and an ordered add monoid for `R` -/
-instance idemSemiring [SemilatticeSup R] [OrderBot R] [AddMonoid R] [AddLeftMono R] [AddRightMono R] :
+instance idemSemiring
+    [SemilatticeSup R] [OrderBot R] [AddMonoid R] [AddLeftMono R] [AddRightMono R] :
     IdemSemiring (Antitropical R) :=
-  { addMonoid, addCommMagma, distrib, mulZeroClass, monoid, semilatticeSup, orderBot with }
+  { nonAnnihilatingIdemSemiring, addMonoid, mulZeroClass, orderBot with }
 
 /-- An idempotent and commutative semiring for `Antitropical R`
 given a supremum semilattice with a minimum and an ordered and commutative add monoid for `R` -/
-instance idemCommSemiring [SemilatticeSup R] [OrderBot R] [OrderedAddCommMonoid R] :
-    IdemCommSemiring (Antitropical R) := sorry
---  { idemSemiring, commMagma with }
+instance idemCommSemiring
+    [SemilatticeSup R] [AddCommMonoid R] [OrderBot R] [AddLeftMono R] [AddRightMono R] :
+    IdemCommSemiring (Antitropical R) :=
+  { idemSemiring, commMagma with }
 
 end Antitropical
