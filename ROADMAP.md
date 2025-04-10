@@ -1,13 +1,12 @@
 ### Commit Format
 ```
-STAGE \d+( SECTION \w+(
-(OUTLINE|DEFINE|IMPLEMENT|PROVE|UPDATE|REFACTOR) \w+)*)?
-END
+\d+(-\w+( \w+)*(
+(OUTLINE|DEFINE|IMPLEMENT|PROVE|UPDATE|REFACTOR) \w+)*)? END
 ```
 
 ### Branch Format
 ```
-STAGE-\d+(-SECTION-\w+(-\w+)*)?
+\d+(-\w+(:\w+)*)?
 ```
 
 # STAGE 1: THEORY
