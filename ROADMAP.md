@@ -22,7 +22,7 @@ STAGE-\d+(-SECTION-\w+(-\w+)*)?
 
 ### Tropical Semirings
 * Define `Antitropical` which induces a max-tropical semiring on a type
-* Prove that these generate `NonAnnihilatingIdemSemiring`, `NonAnnihilatingIdemCommSemiring`, `IdemSemiring`, and `IdemCommSemiring` toggling additive commutativity and presence of a minimum
+* Prove that these generate `NonAnnihilatingIdemSemiring` and `NonAnnihilatingIdemCommSemiring`
 
 ### Instances
 * Implement `BalancedProd` preserving partial order and `NonAnnihilatingCommSemiring`

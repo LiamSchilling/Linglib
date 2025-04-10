@@ -1,4 +1,5 @@
 import Linglib.Algebra.NonAnnihilatingSemiring
+import Mathlib.Algebra.Order.Monoid.Unbundled.MinMax
 
 /-!
 ### Max-Tropical Semirings
@@ -12,8 +13,8 @@ The max-tropicalization produces a `NonAnnihilatingIdemSemiring`.
 
 * `Antitropical`: induces a max-tropical semiring on a type
 * `Antitropical.nonAnnihilatingIdemSemiring`: a
-  non-annihilating idempotent semiring for `Antitropical R`
-  given a supremum semilattice and add monoid for `R`
+  non-annihilating idempotent and commutative semiring for `Antitropical R`
+  given a linear order and an ordered and commutative add monoid for `R`
 
  -/
 
@@ -72,9 +73,6 @@ instance semilatticeSup [self : SemilatticeSup R] : SemilatticeSup (Antitropical
 instance lattice [self : Lattice R] : Lattice (Antitropical R) :=
   self
 
-instance zero [Bot R] : Zero (Antitropical R) where
-  zero := trop ⊥
-
 instance one [Zero R] : One (Antitropical R) where
   one := trop 0
 
@@ -83,8 +81,6 @@ instance add [Max R] : Add (Antitropical R) where
 
 instance mul [Add R] : Mul (Antitropical R) where
   mul a b := untrop a + untrop b
-
-theorem bot_eq_zero [Bot R] : (⊥ : R) = (0 : Antitropical R) := rfl
 
 theorem zero_eq_one [Zero R] : (0 : R) = (1 : Antitropical R) := rfl
 
@@ -104,69 +100,43 @@ theorem trop_sup [SemilatticeSup R] (a b : R) : a ⊔ b = trop a ⊔ trop b := r
 
 theorem untrop_sup [SemilatticeSup R] (a b : Antitropical R) : untrop a ⊔ untrop b = a ⊔ b := rfl
 
-instance addZeroClass {R} [SemilatticeSup R] [OrderBot R] : AddZeroClass (Antitropical R) where
-  zero_add := sorry
-  add_zero := sorry
-
 instance addSemigroup [SemilatticeSup R] : AddSemigroup (Antitropical R) where
-  add_assoc := sorry
+  add_assoc := by intro a b c; simp[←eq_untrop, ←untrop_add, sup_assoc]
 
 instance addCommMagma [SemilatticeSup R] : AddCommMagma (Antitropical R) where
-  add_comm := sorry
-
-instance addMonoid [SemilatticeSup R] [OrderBot R] : AddMonoid (Antitropical R) :=
-  { addSemigroup, addZeroClass with
-  nsmul := nsmulRecAuto }
-
-instance mulZeroClass [SemilatticeSup R] [OrderBot R] [Add R] : MulZeroClass (Antitropical R) where
-  zero_mul := sorry
-  mul_zero := sorry
+  add_comm := by intro a b; simp[←eq_untrop, ←untrop_add, sup_comm]
 
 instance mulOneClass [AddZeroClass R] : MulOneClass (Antitropical R) where
-  one_mul := sorry
-  mul_one := sorry
+  one_mul := by intro a; simp[←zero_eq_one, ←eq_untrop, ←untrop_mul]
+  mul_one := by intro a; simp[←zero_eq_one, ←eq_untrop, ←untrop_mul]
 
 instance semigroup [AddSemigroup R] : Semigroup (Antitropical R) where
-  mul_assoc := sorry
+  mul_assoc := by intro a b c; simp[←eq_untrop, ←untrop_mul, add_assoc]
 
 instance commMagma [AddCommMagma R] : CommMagma (Antitropical R) where
-  mul_comm := sorry
+  mul_comm := by intro a b; simp[←eq_untrop, ←untrop_mul, add_comm]
 
 instance monoid [AddMonoid R] : Monoid (Antitropical R) :=
   { semigroup, mulOneClass with
   npow := npowRecAuto }
 
-instance distrib [SemilatticeSup R] [Add R] [AddLeftMono R] [AddRightMono R] :
+instance distrib [LinearOrder R] [Add R] [AddLeftMono R] [AddRightMono R] :
     Distrib (Antitropical R) where
-  left_distrib := sorry
-  right_distrib := sorry
+  left_distrib := by intro a b c; simp[←eq_untrop, ←untrop_add, ←untrop_mul, max_add_add_left]
+  right_distrib := by intro a b c; simp[←eq_untrop, ←untrop_add, ←untrop_mul, max_add_add_right]
 
 /-- A non-annihilating idempotent semiring for `Antitropical R`
-given a supremum semilattice and an ordered add monoid for `R` -/
+given a linear order and an ordered add monoid for `R` -/
 instance nonAnnihilatingIdemSemiring
-    [SemilatticeSup R] [AddMonoid R] [AddLeftMono R] [AddRightMono R] :
+    [LinearOrder R] [AddMonoid R] [AddLeftMono R] [AddRightMono R] :
     NonAnnihilatingIdemSemiring (Antitropical R) :=
   { addSemigroup, addCommMagma, distrib, monoid, semilatticeSup with }
 
 /-- A non-annihilating idempotent and commutative semiring for `Antitropical R`
-given a supremum semilattice and an ordered and commutative add monoid for `R` -/
+given a linear order and an ordered and commutative add monoid for `R` -/
 instance nonAnnihilatingIdemCommSemiring
-    [SemilatticeSup R] [AddCommMonoid R] [AddLeftMono R] [AddRightMono R] :
+    [LinearOrder R] [AddCommMonoid R] [AddLeftMono R] [AddRightMono R] :
     NonAnnihilatingIdemCommSemiring (Antitropical R) :=
   { nonAnnihilatingIdemSemiring, commMagma with }
-
-/-- An idempotent semiring for `Antitropical R`
-given a supremum semilattice with a minimum and an ordered add monoid for `R` -/
-instance idemSemiring
-    [SemilatticeSup R] [OrderBot R] [AddMonoid R] [AddLeftMono R] [AddRightMono R] :
-    IdemSemiring (Antitropical R) :=
-  { nonAnnihilatingIdemSemiring, addMonoid, mulZeroClass, orderBot with }
-
-/-- An idempotent and commutative semiring for `Antitropical R`
-given a supremum semilattice with a minimum and an ordered and commutative add monoid for `R` -/
-instance idemCommSemiring
-    [SemilatticeSup R] [OrderBot R] [AddCommMonoid R] [AddLeftMono R] [AddRightMono R] :
-    IdemCommSemiring (Antitropical R) :=
-  { idemSemiring, commMagma with }
 
 end Antitropical
