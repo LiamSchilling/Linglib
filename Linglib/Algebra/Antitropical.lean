@@ -2,7 +2,7 @@ import Linglib.Algebra.NonAnnihilatingSemiring
 import Mathlib.Algebra.Order.Monoid.Unbundled.MinMax
 
 /-!
-### Max-Tropical Semirings
+# Max-Tropical Semirings
 
 Tropicalization of semirings making supremum `+` and sum `*`.
 Mathlib's `Tropical` induces a min-tropical semiring (making infimum `+`),

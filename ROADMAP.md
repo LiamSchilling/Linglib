@@ -23,9 +23,9 @@
 * Define `Antitropical` which induces a max-tropical semiring on a type
 * Prove that these generate `NonAnnihilatingIdemSemiring` and `NonAnnihilatingIdemCommSemiring`
 
-### Instances
-* Implement `BalancedProd` preserving partial order and `NonAnnihilatingCommSemiring`
-* Implement `DominatingProd` preserving linear order and `NonAnnihilatingIdemCommSemiring`
+### Reordering Synonyms
+* Create synonymous instances up to `IdemCommSemiring` for `Prod.Lex`
+* Create synonymous instances up to `IdemCommSemiring` for `OrderDual`
 
 ## Automata
 
